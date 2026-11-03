@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ app_name }} | DevOps Control Hub</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container header-container">
+            <div class="logo">
+                <span class="logo-icon">🚀</span>
+                <span class="logo-text">{{ app_name }}</span>
+            </div>
+            <div class="header-badges">
+                <span class="badge badge-success">
+                    <span class="pulse-dot"></span> System Live
+                </span>
+                <span class="badge badge-env">{{ app_env | upper }}</span>
+                <span class="badge badge-version">v{{ app_version }}</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <!-- Hero Banner -->
+            <section class="hero-section">
+                <div class="hero-content">
+                    <h1>Ganesh DevOps Automation Hub</h1>
+                    <p class="hero-subtitle">
+                        Containerized application running with continuous integration via Jenkins, Docker container engine, and automated health checks.
+                    </p>
+                </div>
+                <div class="hero-actions">
+                    <a href="/health" target="_blank" class="btn btn-outline">Check /health</a>
+                    <a href="/api/metrics" target="_blank" class="btn btn-outline">System Metrics</a>
+                    <a href="/api/info" target="_blank" class="btn btn-primary">API Info</a>
+                </div>
+            </section>
+
+            <!-- Metrics Grid -->
+            <section class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <span class="metric-icon">🐳</span>
+                        <span class="metric-title">Runtime Environment</span>
+                    </div>
+                    <div class="metric-value">
+                        {% if stats.is_containerized %}
+                            <span class="text-success">Docker Container</span>
+                        {% else %}
+                            <span class="text-warning">Native Host</span>
+                        {% endif %}
+                    </div>
+                    <div class="metric-footer">Host: {{ stats.hostname }}</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <span class="metric-icon">⏱️</span>
+                        <span class="metric-title">Service Uptime</span>
+                    </div>
+                    <div class="metric-value">{{ stats.uptime_human }}</div>
+                    <div class="metric-footer">UTC: {{ stats.server_time_utc }}</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <span class="metric-icon">🐍</span>
+                        <span class="metric-title">Python Engine</span>
+                    </div>
+                    <div class="metric-value">Python {{ stats.python_version }}</div>
+                    <div class="metric-footer">Arch: {{ stats.architecture }}</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <span class="metric-icon">💻</span>
+                        <span class="metric-title">Operating System</span>
+                    </div>
+                    <div class="metric-value-sm">{{ stats.os }}</div>
+                    <div class="metric-footer">Status: All services operational</div>
+                </div>
+            </section>
+
+            <!-- Pipeline Visualizer -->
+            <section class="pipeline-section">
+                <h2 class="section-title">DevOps CI/CD Lifecycle</h2>
+                <div class="pipeline-flow">
+                    <div class="pipeline-stage active">
+                        <div class="stage-step">1</div>
+                        <div class="stage-name">Git Repository</div>
+                        <div class="stage-desc">Source control & trigger</div>
+                    </div>
+                    <div class="pipeline-arrow">➜</div>
+                    <div class="pipeline-stage active">
+                        <div class="stage-step">2</div>
+                        <div class="stage-name">Jenkins Pipeline</div>
+                        <div class="stage-desc">Linting, pytest & JUnit</div>
+                    </div>
+                    <div class="pipeline-arrow">➜</div>
+                    <div class="pipeline-stage active">
+                        <div class="stage-step">3</div>
+                        <div class="stage-name">Docker Build</div>
+                        <div class="stage-desc">Multi-stage image packaging</div>
+                    </div>
+                    <div class="pipeline-arrow">➜</div>
+                    <div class="pipeline-stage active">
+                        <div class="stage-step">4</div>
+                        <div class="stage-name">Smoke Test</div>
+                        <div class="stage-desc">Automated /health check</div>
+                    </div>
+                    <div class="pipeline-arrow">➜</div>
+                    <div class="pipeline-stage active">
+                        <div class="stage-step">5</div>
+                        <div class="stage-name">Deploy / Run</div>
+                        <div class="stage-desc">Container orchestration</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Deployment Tasks / Activity -->
+            <section class="tasks-section">
+                <div class="section-header-flex">
+                    <h2 class="section-title">DevOps Deployment Milestones</h2>
+                    <span class="task-count">{{ tasks | length }} Tasks</span>
+                </div>
+                <div class="tasks-table-wrapper">
+                    <table class="tasks-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Task Title</th>
+                                <th>Category</th>
+                                <th>Timestamp</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for task in tasks %}
+                            <tr>
+                                <td class="task-id">#{{ task.id }}</td>
+                                <td class="task-title"><strong>{{ task.title }}</strong></td>
+                                <td><span class="category-pill">{{ task.category }}</span></td>
+                                <td class="task-time">{{ task.timestamp }}</td>
+                                <td>
+                                    {% if task.status == 'Completed' %}
+                                        <span class="status-badge status-completed">✓ {{ task.status }}</span>
+                                    {% elif task.status == 'In Progress' %}
+                                        <span class="status-badge status-progress">⚡ {{ task.status }}</span>
+                                    {% else %}
+                                        <span class="status-badge status-pending">⏳ {{ task.status }}</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-container">
+            <p>© 2026 Ganesh DevOps Project. Powered by Docker, Jenkins, and Python Flask.</p>
+            <p class="footer-links">
+                <a href="https://github.com/Tharun830/ganesh_devops_project" target="_blank">GitHub Repository</a>
+                <span>•</span>
+                <a href="/health">Health API</a>
+                <span>•</span>
+                <a href="/api/metrics">Metrics API</a>
+            </p>
+        </div>
+    </footer>
+</body>
+</html>

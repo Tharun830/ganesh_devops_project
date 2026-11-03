@@ -1,0 +1,24 @@
+version: '3.8'
+
+# Optional companion compose file to run a local Jenkins CI/CD controller in Docker
+# Usage: docker compose -f docker-compose.jenkins.yml up -d
+
+services:
+  jenkins:
+    image: jenkins/jenkins:lts-jdk17
+    container_name: ganesh-jenkins-controller
+    privileged: true
+    user: root
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - //var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+    environment:
+      - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
+
+volumes:
+  jenkins_home:
+    name: ganesh_jenkins_data

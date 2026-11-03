@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ganesh_devops_project:latest
+    container_name: ganesh-devops-app
+    ports:
+      - "5000:5000"
+    environment:
+      - APP_NAME=Ganesh DevOps Project
+      - APP_ENV=production
+      - APP_VERSION=1.0.0
+      - PORT=5000
+      - RUNNING_IN_DOCKER=true
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
